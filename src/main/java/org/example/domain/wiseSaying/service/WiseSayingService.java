@@ -88,4 +88,8 @@ public class WiseSayingService {
         }
 //        return new WiseSaying[]{};
     }
+
+    public int getTotalCount() {
+        return savedForms.size();
+    }
 }

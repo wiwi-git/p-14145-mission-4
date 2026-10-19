@@ -9,7 +9,7 @@ public class AppTestRunner {
 
         Scanner sc = TestUtil.genScanner(input);
         App app = new App(sc);
-        app.run();
+        app.run(false);
 
         TestUtil.clearSetOutToByteArray();
 
