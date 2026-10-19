@@ -7,6 +7,6 @@ public class Main {
 
     static void main() {
         App app = new App(new Scanner(System.in));
-        app.run();
+        app.run(true);
     }
 }

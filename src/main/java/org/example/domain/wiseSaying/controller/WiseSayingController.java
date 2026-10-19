@@ -30,17 +30,48 @@ public class WiseSayingController {
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
 
-    public void printList() {
-        System.out.println("""
-                번호 / 작가 / 명언
-                ----------------------""");
+    public void printList(int limit, int offset) {
+        int count = 0;
+        int passCount = offset;
+
         for (int id = wsService.lastId; id > 0; id--) {
             WiseSaying form = wsService.getForm(id);
             if (form == null) continue;
 
+            if (passCount >= 0) {
+                passCount--;
+                if (passCount >= 0) continue;
+            }
+            if (count >= limit) break;
+
             String printLine = form.toString();
             System.out.println(printLine);
+            count++;
         }
+
+        int currentPage = offset / limit + 1;
+
+        StringBuilder pageLine = new StringBuilder("페이지 : ");
+        int total = wsService.getTotalCount();
+        int maxPage = total / limit;
+        if (total % limit > 0) maxPage ++;
+
+
+        for (int i = 1; i < maxPage; i++) {
+            String pageNumber = "";
+
+            if (i == currentPage) {
+                pageNumber = "[%d] / ".formatted(currentPage);
+            }
+            else pageNumber = i + " / ";
+
+            pageLine.append(pageNumber);
+        }
+        if (currentPage == maxPage) pageLine.append("[").append(maxPage).append("]");
+        else pageLine.append(maxPage);
+
+        System.out.println(pageLine);
+
     }
 
     public void delete(int id) {
@@ -83,17 +114,14 @@ public class WiseSayingController {
     public void search(KeywordType type, String keyword) {
         List<WiseSaying> result = wsService.search(type, keyword);
 
-        System.out.printf("""
-                ----------------------
-                검색타입 : %s
-                검색어 : %s
-                ----------------------
-                번호 / 작가 / 명언
-                ----------------------
-                """, type.toString().toLowerCase(), keyword);
-
         for (WiseSaying w : result) {
             System.out.println(w.toString());
+        }
+    }
+
+    public void addSampleData() {
+        for (int i = 1; i < 11; i++) {
+            wsService.register("명언 " + i, "작자미상 " + i);
         }
     }
 }
