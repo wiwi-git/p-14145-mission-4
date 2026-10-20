@@ -126,8 +126,12 @@ public class WiseSayingRepository {
 
                     switch (key) {
                         case "id" :
-                            // TODO: 항상 parseInt 가 걱정되네 safe버전을 만들어놔야하는데
-                            form.setId(Integer.parseInt(value));
+                            int id = Util.safeParseInt(value);
+                            if (id < 0) {
+                                System.out.println("잘못된 데이터가 발견되었습니다. file:" + file.getName());
+                                continue;
+                            }
+                            form.setId(id);
                             break;
                         case "content":
                             form.setText(value);
