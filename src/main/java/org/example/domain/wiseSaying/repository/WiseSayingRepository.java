@@ -1,5 +1,6 @@
 package org.example.domain.wiseSaying.repository;
 
+import org.example.Util;
 import org.example.domain.system.KeywordType;
 import org.example.domain.wiseSaying.entity.WiseSaying;
 
@@ -21,12 +22,12 @@ public class WiseSayingRepository {
             file.createNewFile();
         }
 
-        FileWriter fw = new FileWriter(basePath + filename);
-        PrintWriter pw = new PrintWriter(fw);
-        pw.println(form.toJson());
-
-        fw.close();
-        pw.close();
+        try(
+            FileWriter fw = new FileWriter(basePath + filename);
+            PrintWriter pw = new PrintWriter(fw);
+        ){
+            pw.println(form.toJson());
+        }
     }
 
     public int writeLastId(int id) throws IOException {
@@ -45,13 +46,12 @@ public class WiseSayingRepository {
         if (!file.exists()) {
             file.createNewFile();
         }
-
-        FileWriter fw = new FileWriter(file);
-        PrintWriter pw = new PrintWriter(fw);
-        pw.println(id);
-
-        fw.close();
-        pw.close();
+        try(
+            FileWriter fw = new FileWriter(file);
+            PrintWriter pw = new PrintWriter(fw);
+        ){
+            pw.println(id);
+        }
 
         return id;
     }
@@ -66,18 +66,17 @@ public class WiseSayingRepository {
             return 0;
         }
 
-        FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
+        try(
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+        ) {
 
-        String line = br.readLine().trim();
+            String line = br.readLine().trim();
+            int lastId = Util.safeParseInt(line);
+            if (lastId < 0) throw new NumberFormatException();
 
-        // TODO: id int 검사
-        int lastId = Integer.parseInt(line);
-
-        fr.close();
-        br.close();
-
-        return lastId;
+            return lastId;
+        }
     }
 
     public Map<Integer, WiseSaying> getSavedForms() throws IOException{
@@ -103,64 +102,44 @@ public class WiseSayingRepository {
     }
 
     private WiseSaying readFileForm(File file) throws IOException{
-//        StringBuilder result = new StringBuilder();
-        FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
-
-        /*
-        String line = "";
-        while ((line = br.readLine()) != null) {
-            result.append(line);
-        }
-        String rawForm = result.toString() ;
-        String[] splited = rawForm.split("/");
-
-        if (splited.length != 3) {
-            System.out.println("파일 형식이 정상적이지 않습니다.");
-            return new WiseSaying(-1);
-        }
-        // TODO: id가 int인지 검사?
-
-        int id = Integer.parseInt(splited[0].trim());
-        WiseSaying form = new WiseSaying(id, splited[1].trim(), splited[2].trim());
-         */
 
         // TODO: 언제 한번 text to json 하는거 제대로 만들어봐도 좋을듯?
         String line = "";
         WiseSaying form = new WiseSaying(-1);
 
-        while ((line = br.readLine()) != null) {
-            String str = line.trim();
-            if (str.startsWith("\"")) {
-                if (str.endsWith(",")) str = str.substring(0, str.length() - 1);
+        try(
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+        ) {
+            while ((line = br.readLine()) != null) {
+                String str = line.trim();
+                if (str.startsWith("\"")) {
+                    if (str.endsWith(",")) str = str.substring(0, str.length() - 1);
 
-                String[] keyAndValue = str.split(":");
-                if (keyAndValue.length != 2) {
-                    System.out.printf("json파싱중에 예상치 못한 상황이 발생했다! line: %s%n", str);
-                    continue;
+                    String[] keyAndValue = str.split(":");
+                    if (keyAndValue.length != 2) {
+                        System.out.printf("json파싱중에 예상치 못한 상황이 발생했다! line: %s%n", str);
+                        continue;
+                    }
+                    String key = keyAndValue[0].replace("\"",  "").trim();
+                    String value = keyAndValue[1].replace("\"",  "").trim();
+
+                    switch (key) {
+                        case "id" :
+                            // TODO: 항상 parseInt 가 걱정되네 safe버전을 만들어놔야하는데
+                            form.setId(Integer.parseInt(value));
+                            break;
+                        case "content":
+                            form.setText(value);
+                            break;
+                        case "author":
+                            form.setAuth(value);
+                            break;
+                        default: break;
+                    }
                 }
-                String key = keyAndValue[0].replace("\"",  "").trim();
-                String value = keyAndValue[1].replace("\"",  "").trim();
-
-                switch (key) {
-                    case "id" :
-                        // TODO: 항상 parseInt 가 걱정되네 safe버전을 만들어놔야하는데
-                        form.setId(Integer.parseInt(value));
-                        break;
-                    case "content":
-                        form.setText(value);
-                        break;
-                    case "author":
-                        form.setAuth(value);
-                        break;
-                    default: break;
-                }
-            }
-        }
-
-
-        fr.close();
-        br.close();
+            }//while
+        }// try
 
         return form;
     }
@@ -182,9 +161,6 @@ public class WiseSayingRepository {
             file.createNewFile();
         }
 
-        FileWriter fw = new FileWriter(file);
-        PrintWriter pw = new PrintWriter(fw);
-
         WiseSaying[] formArr = map.values().toArray(new WiseSaying[0]);
         Arrays.sort(formArr, new Comparator<WiseSaying>() {
             @Override
@@ -193,28 +169,31 @@ public class WiseSayingRepository {
             }
         });
 
-        pw.println("[");
+        try(
+            FileWriter fw = new FileWriter(file);
+            PrintWriter pw = new PrintWriter(fw);
+        ) {
 
-        int index = 0;
-        for (WiseSaying form : formArr) {
-            index++;
+            pw.println("[");
 
-            pw.println("\t{");
-            pw.println("\t\t\"id\": " + form.getId() + ",");
-            pw.println("\t\t\"content\": \"" + form.getText() + "\",");
-            pw.println("\t\t\"author\": \"" + form.getAuth() + "\"");
+            int index = 0;
+            for (WiseSaying form : formArr) {
+                index++;
 
-            if (index < formArr.length) {
-                pw.println("\t},");
-            } else {
-                pw.println("\t}");
+                pw.println("\t{");
+                pw.println("\t\t\"id\": " + form.getId() + ",");
+                pw.println("\t\t\"content\": \"" + form.getText() + "\",");
+                pw.println("\t\t\"author\": \"" + form.getAuth() + "\"");
+
+                if (index < formArr.length) {
+                    pw.println("\t},");
+                } else {
+                    pw.println("\t}");
+                }
             }
-        }
 
-        pw.println("]");
-
-        pw.close();
-        fw.close();
+            pw.println("]");
+        }// try
     }
 
     public void allClear() {

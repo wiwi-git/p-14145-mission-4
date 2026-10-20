@@ -8,10 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -114,11 +111,11 @@ class WiseSayingControllerTest {
         File file = new File(wsRepo.basePath + "data.json");
         assertTrue(file.exists());
 
-        FileReader fr = null;
-        try {
-            fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
 
+        try(
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+        ) {
             String line = "";
             StringBuilder lines = new StringBuilder();
             while ((line = br.readLine()) != null) {
