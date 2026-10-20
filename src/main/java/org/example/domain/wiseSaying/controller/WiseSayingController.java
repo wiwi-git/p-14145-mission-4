@@ -30,13 +30,28 @@ public class WiseSayingController {
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
 
-    public void printList(int limit, int offset) {
+    public void printList(int limit, int offset, KeywordType type, String keyword) {
+        if (keyword.isEmpty()) {
+            System.out.println("""
+                        번호 / 작가 / 명언
+                        ----------------------""");
+        } else {
+            System.out.printf("""
+                        ----------------------
+                        검색타입 : %s
+                        검색어 : %s
+                        ----------------------
+                        번호 / 작가 / 명언
+                        ----------------------
+                        """, type.toString().toLowerCase(), keyword);
+        }
+
         int count = 0;
         int passCount = offset;
 
-        for (int id = wsService.lastId; id > 0; id--) {
-            WiseSaying form = wsService.getForm(id);
-            if (form == null) continue;
+        List<WiseSaying> result = wsService.search(type, keyword);
+
+        for (WiseSaying w : result) {
 
             if (passCount >= 0) {
                 passCount--;
@@ -44,7 +59,7 @@ public class WiseSayingController {
             }
             if (count >= limit) break;
 
-            String printLine = form.toString();
+            String printLine = w.toString();
             System.out.println(printLine);
             count++;
         }
@@ -52,7 +67,7 @@ public class WiseSayingController {
         int currentPage = offset / limit + 1;
 
         StringBuilder pageLine = new StringBuilder("페이지 : ");
-        int total = wsService.getTotalCount();
+        int total = result.size();
         int maxPage = total / limit;
         if (total % limit > 0) maxPage ++;
 
@@ -111,13 +126,13 @@ public class WiseSayingController {
         wsService.allClear();
     }
 
-    public void search(KeywordType type, String keyword) {
-        List<WiseSaying> result = wsService.search(type, keyword);
-
-        for (WiseSaying w : result) {
-            System.out.println(w.toString());
-        }
-    }
+//    public void search(KeywordType type, String keyword) {
+//        List<WiseSaying> result = wsService.search(type, keyword);
+//
+//        for (WiseSaying w : result) {
+//            System.out.println(w.toString());
+//        }
+//    }
 
     public void addSampleData() {
         for (int i = 1; i < 11; i++) {

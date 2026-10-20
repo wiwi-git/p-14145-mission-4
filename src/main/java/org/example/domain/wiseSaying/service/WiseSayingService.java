@@ -86,7 +86,6 @@ public class WiseSayingService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        return new WiseSaying[]{};
     }
 
     public int getTotalCount() {

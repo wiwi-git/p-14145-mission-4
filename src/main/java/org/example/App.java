@@ -40,32 +40,17 @@ public class App {
                     break;
                 case LIST:
                     String keyword = cmd.getParam("keyword").trim();
-                    if (keyword.isEmpty()) {
-                        String strPage = cmd.getParam("page").trim();
-                        int page = 0;
-                        int offset = 0;
-                        if (!strPage.isEmpty()) {
-                            page = Util.safeParseInt(cmd.getParam("page")) - 1;
-                            if (page < 0 ) page = 0;
-                            offset = page * MAX_PRINT_LIMIT;
-                        }
+                    KeywordType type = KeywordType.create(cmd.getParam("keywordType").trim());
+                    String strPage = cmd.getParam("page").trim();
 
-                        System.out.println("""
-                        번호 / 작가 / 명언
-                        ----------------------""");
-                        wsController.printList(MAX_PRINT_LIMIT, offset);
-                    } else {
-                        KeywordType type = KeywordType.create(cmd.getParam("keywordType").trim());
-                        System.out.printf("""
-                        ----------------------
-                        검색타입 : %s
-                        검색어 : %s
-                        ----------------------
-                        번호 / 작가 / 명언
-                        ----------------------
-                        """, type.toString().toLowerCase(), keyword);
-                        wsController.search(type, keyword);
+                    int page = 0;
+                    int offset = 0;
+                    if (!strPage.isEmpty()) {
+                        page = Util.safeParseInt(cmd.getParam("page")) - 1;
+                        if (page < 0 ) page = 0;
+                        offset = page * MAX_PRINT_LIMIT;
                     }
+                    wsController.printList(MAX_PRINT_LIMIT, offset, type, keyword);
                     break;
                 case DELETE:
                     wsController.delete(Util.safeParseInt(cmd.getParam("id").trim()));
