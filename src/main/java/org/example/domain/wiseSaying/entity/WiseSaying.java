@@ -1,9 +1,9 @@
 package org.example.domain.wiseSaying.entity;
 
 public class WiseSaying {
-    int id;
-    String text = "";
-    String auth = "";
+    private int id;
+    private String text = "";
+    private String auth = "";
 
     public WiseSaying(int id) {
         this.id = id;
