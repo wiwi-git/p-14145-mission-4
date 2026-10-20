@@ -1,6 +1,8 @@
 package org.example.domain.wiseSaying.controller;
 
+import org.example.Util;
 import org.example.domain.system.KeywordType;
+import org.example.domain.system.ParseCmd;
 import org.example.domain.wiseSaying.entity.WiseSaying;
 import org.example.domain.wiseSaying.service.WiseSayingService;
 
@@ -30,7 +32,26 @@ public class WiseSayingController {
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
 
-    public void printList(int limit, int offset, KeywordType type, String keyword) {
+    public void printList(ParseCmd cmd) {
+        final int MAX_PRINT_LIMIT = 5;
+
+        int limit = MAX_PRINT_LIMIT;
+        String keyword = cmd.getParam("keyword").trim();
+        KeywordType type = KeywordType.create(cmd.getParam("keywordType").trim());
+        String strPage = cmd.getParam("page").trim();
+
+        if (type == KeywordType.ERROR) {
+            return;
+        }
+
+        int page = 0;
+        int offset = 0;
+        if (!strPage.isEmpty()) {
+            page = Util.safeParseInt(cmd.getParam("page")) - 1;
+            if (page < 0 ) page = 0;
+            offset = page * MAX_PRINT_LIMIT;
+        }
+
         if (keyword.isEmpty()) {
             System.out.println("""
                         번호 / 작가 / 명언
@@ -89,7 +110,9 @@ public class WiseSayingController {
 
     }
 
-    public void delete(int id) {
+    public void delete(ParseCmd cmd) {
+        int id = Util.safeParseInt(cmd.getParam("id").trim());
+
         if (!wsService.containsKey(id)) {
             System.out.println(id + "번 명언은 존재하지 않습니다.");
             return;
@@ -98,7 +121,8 @@ public class WiseSayingController {
         System.out.println(id + "번 명언이 삭제되었습니다.");
     }
 
-    public void update(int id) {
+    public void update(ParseCmd cmd) {
+        int id = Util.safeParseInt(cmd.getParam("id").trim());
         if (!wsService.containsKey(id)) {
             System.out.println(id + "번 명언은 존재하지 않습니다.");
             return;

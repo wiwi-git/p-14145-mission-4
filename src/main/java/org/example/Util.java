@@ -6,7 +6,7 @@ public class Util {
      * @param {string} str
      * @return int
      */
-    static int safeParseInt(String str) {
+    public static int safeParseInt(String str) {
         int id = -1;
         if (str.isEmpty()) return id;
 
