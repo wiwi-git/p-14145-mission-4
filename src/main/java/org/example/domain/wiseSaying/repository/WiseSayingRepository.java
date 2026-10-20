@@ -58,7 +58,6 @@ public class WiseSayingRepository {
 
     public void write(int id, WiseSaying newForm) throws IOException {
         writeFileForm(id + ".json", newForm);
-        writeLastId(id);
     }
 
     public int getLastId() throws IOException{
