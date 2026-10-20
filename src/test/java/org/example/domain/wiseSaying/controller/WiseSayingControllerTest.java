@@ -55,6 +55,63 @@ class WiseSayingControllerTest {
     }
 
     @Test
+    @DisplayName("목록-페이징")
+    void t2_1() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 20; i++) {
+            String line = """
+                    등록
+                    명언 %d
+                    작자 %d
+                    """.formatted(i, i);
+            sb.append(line);
+        }
+
+        final String out = AppTestRunner.run(sb.toString() +"""
+                목록?page=1
+                목록?page=2
+                목록?page=3
+                종료
+                """);
+
+        assertThat(out)
+                .contains("""
+                        번호 / 작가 / 명언
+                        ----------------------
+                        20 / 작자 19 / 명언 19
+                        19 / 작자 18 / 명언 18
+                        18 / 작자 17 / 명언 17
+                        17 / 작자 16 / 명언 16
+                        16 / 작자 15 / 명언 15
+                        ----------------------
+                        페이지 : [1] / 2 / 3 / 4
+                        """)
+                .contains("""
+                        번호 / 작가 / 명언
+                        ----------------------
+                        15 / 작자 14 / 명언 14
+                        14 / 작자 13 / 명언 13
+                        13 / 작자 12 / 명언 12
+                        12 / 작자 11 / 명언 11
+                        11 / 작자 10 / 명언 10
+                        ----------------------
+                        페이지 : 1 / [2] / 3 / 4
+                        """)
+                .contains("""
+                        번호 / 작가 / 명언
+                        ----------------------
+                        10 / 작자 9 / 명언 9
+                        9 / 작자 8 / 명언 8
+                        8 / 작자 7 / 명언 7
+                        7 / 작자 6 / 명언 6
+                        6 / 작자 5 / 명언 5
+                        ----------------------
+                        페이지 : 1 / 2 / [3] / 4
+                        """);
+    }
+
+    @Test
     @DisplayName("수정")
     void t3() {
         final String out = AppTestRunner.run("""
@@ -152,6 +209,66 @@ class WiseSayingControllerTest {
                         번호 / 작가 / 명언
                         ----------------------
                         3 / 랄프 왈도 에머슨 / 나 자신에 대한 자신감을 잃으면 온 세상이 나의 적이 된다.
+                        """);
+    }
+    @Test
+    @DisplayName("검색-페이징")
+    void t6_1() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 10; i++) {
+            String line = """
+                    등록
+                    명언 %d
+                    작자 %d
+                    """.formatted(i, i);
+            sb.append(line);
+        }
+        for (int i = 0; i < 10; i++) {
+            String line = """
+                    등록
+                    명언2 %d
+                    작자2 %d
+                    """.formatted(i, i);
+            sb.append(line);
+        }
+
+        final String out = AppTestRunner.run(sb.toString() +"""
+                목록?keywordType=content&keyword=명언&page=2
+                목록?keywordType=author&keyword=작자2&page=1
+                종료
+                """);
+
+        assertThat(out)
+                .contains("""
+                        ----------------------
+                        검색타입 : content
+                        검색어 : 명언
+                        ----------------------
+                        번호 / 작가 / 명언
+                        ----------------------
+                        15 / 작자2 4 / 명언2 4
+                        14 / 작자2 3 / 명언2 3
+                        13 / 작자2 2 / 명언2 2
+                        12 / 작자2 1 / 명언2 1
+                        11 / 작자2 0 / 명언2 0
+                        ----------------------
+                        페이지 : 1 / [2] / 3 / 4
+                        """)
+                .contains("""
+                        ----------------------
+                        검색타입 : author
+                        검색어 : 작자2
+                        ----------------------
+                        번호 / 작가 / 명언
+                        ----------------------
+                        20 / 작자2 9 / 명언2 9
+                        19 / 작자2 8 / 명언2 8
+                        18 / 작자2 7 / 명언2 7
+                        17 / 작자2 6 / 명언2 6
+                        16 / 작자2 5 / 명언2 5
+                        ----------------------
+                        페이지 : [1] / 2
                         """);
     }
 }

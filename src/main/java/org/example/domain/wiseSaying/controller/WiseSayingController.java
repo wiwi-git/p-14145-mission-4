@@ -106,6 +106,7 @@ public class WiseSayingController {
         if (currentPage == maxPage) pageLine.append("[").append(maxPage).append("]");
         else pageLine.append(maxPage);
 
+        System.out.println("----------------------");
         System.out.println(pageLine);
 
     }
