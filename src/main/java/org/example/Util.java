@@ -13,7 +13,7 @@ public class Util {
         try {
             id = Integer.parseInt(str);
         } catch (NumberFormatException e) {
-            System.out.println(e);
+            System.out.println("잘못된 값이 입력되었습니다: " + str);
         }
 
         return id;
