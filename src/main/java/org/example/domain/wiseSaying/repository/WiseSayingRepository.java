@@ -260,6 +260,10 @@ public class WiseSayingRepository {
             }
         }// for
 
-        return result;
+        return result.stream()
+                .sorted(Comparator
+                        .comparing(WiseSaying::getId)
+                        .reversed()
+                ).toList();
     }
 }
