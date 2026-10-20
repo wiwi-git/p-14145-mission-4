@@ -116,7 +116,7 @@ public class WiseSayingRepository {
                 if (str.startsWith("\"")) {
                     if (str.endsWith(",")) str = str.substring(0, str.length() - 1);
 
-                    String[] keyAndValue = str.split(":");
+                    String[] keyAndValue = str.split(":", 2);
                     if (keyAndValue.length != 2) {
                         System.out.printf("json파싱중에 예상치 못한 상황이 발생했다! line: %s%n", str);
                         continue;
