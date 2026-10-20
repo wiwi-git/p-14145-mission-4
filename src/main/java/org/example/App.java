@@ -21,7 +21,7 @@ public class App {
 
         final int MAX_PRINT_LIMIT = 5;
 
-        if (addSample) {
+        if (addSample && (wsController.getTotalCount() == 0)) {
             wsController.addSampleData();
         }
 

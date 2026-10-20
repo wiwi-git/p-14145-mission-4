@@ -139,5 +139,9 @@ public class WiseSayingController {
             wsService.register("명언 " + i, "작자미상 " + i);
         }
     }
+
+    public int getTotalCount() {
+        return wsService.getTotalCount();
+    }
 }
 
