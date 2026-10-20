@@ -27,7 +27,7 @@ class WiseSayingControllerTest {
                 현재를 사랑하라.
                 작자미상
                 종료
-                """);
+                """).replace("\r\n", "\n");
 
         assertThat(out)
                 .contains("명언 :")
@@ -44,7 +44,7 @@ class WiseSayingControllerTest {
                 작자미상
                 목록
                 종료
-                """);
+                """).replace("\r\n", "\n");;
 
         assertThat(out)
                 .contains("""
@@ -73,7 +73,7 @@ class WiseSayingControllerTest {
                 목록?page=2
                 목록?page=3
                 종료
-                """);
+                """).replace("\r\n", "\n");;
 
         assertThat(out)
                 .contains("""
@@ -123,7 +123,7 @@ class WiseSayingControllerTest {
                 홍길동
                 목록
                 종료
-                """);
+                """).replace("\r\n", "\n");;
 
         assertThat(out)
                 .contains("명언(기존) : 현재를 사랑하라.")
@@ -144,7 +144,7 @@ class WiseSayingControllerTest {
                 작자미상
                 삭제?id=1
                 종료
-                """);
+                """).replace("\r\n", "\n");;
 
         assertThat(out)
                 .contains("1번 명언이 삭제되었습니다.");
@@ -159,7 +159,7 @@ class WiseSayingControllerTest {
                 작자미상
                 빌드
                 종료
-                """);
+                """).replace("\r\n", "\n");;
 
         assertThat(out)
                 .contains("data.json 파일의 내용이 갱신되었습니다.");
@@ -202,7 +202,7 @@ class WiseSayingControllerTest {
                 랄프 왈도 에머슨
                 목록?keywordType=content&keyword=자신감
                 종료
-                """);
+                """).replace("\r\n", "\n");;
 
         assertThat(out)
                 .contains("""
@@ -237,7 +237,7 @@ class WiseSayingControllerTest {
                 목록?keywordType=content&keyword=명언&page=2
                 목록?keywordType=author&keyword=작자2&page=1
                 종료
-                """);
+                """).replace("\r\n", "\n");;
 
         assertThat(out)
                 .contains("""
