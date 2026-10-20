@@ -17,8 +17,9 @@ public enum KeywordType {
         try {
             type = KeywordType.valueOf(string.toUpperCase());
         } catch (IllegalArgumentException e) {
-            System.out.println(e);
+            System.out.println("잘못된 값이 입력되었습니다: " + string);
         }
+
         return type;
     }
 }

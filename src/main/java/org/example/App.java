@@ -43,6 +43,10 @@ public class App {
                     KeywordType type = KeywordType.create(cmd.getParam("keywordType").trim());
                     String strPage = cmd.getParam("page").trim();
 
+                    if (type == KeywordType.ERROR) {
+                        continue;
+                    }
+
                     int page = 0;
                     int offset = 0;
                     if (!strPage.isEmpty()) {

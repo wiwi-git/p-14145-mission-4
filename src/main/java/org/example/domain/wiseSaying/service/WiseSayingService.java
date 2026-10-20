@@ -23,7 +23,6 @@ public class WiseSayingService {
             int result = wsRepository.writeLastId(id);
             if (result >= 0) lastId = result;
         } catch (IOException e) {
-            System.out.println(e);;
             throw new RuntimeException(e);
         }
 
@@ -34,7 +33,6 @@ public class WiseSayingService {
         try {
             return wsRepository.getLastId();
         } catch (IOException e) {
-            System.out.println(e);;
             throw new RuntimeException(e);
         }
     }
