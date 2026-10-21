@@ -12,7 +12,7 @@ public class ParseCmd {
     public ParseCmd(String cmd) {
         this.rawCmd = cmd;
 
-        String[] cmdParts = cmd.split("\\?");
+        String[] cmdParts = cmd.split("\\?",2);
         prefix = cmdParts[0].trim();
         suffix = cmdParts.length > 1 ? cmdParts[1].trim() : "";
 
