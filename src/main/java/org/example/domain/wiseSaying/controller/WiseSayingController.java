@@ -149,14 +149,6 @@ public class WiseSayingController {
         wsService.allClear();
     }
 
-//    public void search(KeywordType type, String keyword) {
-//        List<WiseSaying> result = wsService.search(type, keyword);
-//
-//        for (WiseSaying w : result) {
-//            System.out.println(w.toString());
-//        }
-//    }
-
     public void addSampleData() {
         for (int i = 1; i < 11; i++) {
             wsService.register("명언 " + i, "작자미상 " + i);
