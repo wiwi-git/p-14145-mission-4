@@ -35,7 +35,6 @@ public class WiseSayingController {
     public void printList(ParseCmd cmd) {
         final int MAX_PRINT_LIMIT = 5;
 
-        int limit = MAX_PRINT_LIMIT;
         String keyword = cmd.getParam("keyword").trim();
         KeywordType type = KeywordType.create(cmd.getParam("keywordType").trim());
         String strPage = cmd.getParam("page").trim();
@@ -73,24 +72,23 @@ public class WiseSayingController {
         List<WiseSaying> result = wsService.search(type, keyword);
 
         for (WiseSaying w : result) {
-
             if (passCount >= 0) {
                 passCount--;
                 if (passCount >= 0) continue;
             }
-            if (count >= limit) break;
+            if (count >= MAX_PRINT_LIMIT) break;
 
             String printLine = w.toString();
             System.out.println(printLine);
             count++;
         }
 
-        int currentPage = offset / limit + 1;
+        int currentPage = offset / MAX_PRINT_LIMIT + 1;
 
         StringBuilder pageLine = new StringBuilder("페이지 : ");
         int total = result.size();
-        int maxPage = total / limit;
-        if (total % limit > 0) maxPage ++;
+        int maxPage = total / MAX_PRINT_LIMIT;
+        if (total % MAX_PRINT_LIMIT > 0) maxPage ++;
 
 
         for (int i = 1; i < maxPage; i++) {
