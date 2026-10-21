@@ -19,8 +19,6 @@ public class App {
         SystemController sysController = new SystemController();
         WiseSayingController wsController = new WiseSayingController(sc);
 
-        final int MAX_PRINT_LIMIT = 5;
-
         if (addSample && (wsController.getTotalCount() == 0)) {
             wsController.addSampleData();
         }
