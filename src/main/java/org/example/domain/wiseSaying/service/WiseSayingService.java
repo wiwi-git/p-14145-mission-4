@@ -36,8 +36,8 @@ public class WiseSayingService {
         }
     }
 
-    public void delete(int id) {
-        wsRepository.delete(id + ".json");
+    public void deleteById(int id) {
+        wsRepository.deleteById(id);
         savedForms.remove(id);
     }
 

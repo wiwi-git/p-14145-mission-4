@@ -165,10 +165,12 @@ public class WiseSayingRepository {
         return form;
     }
 
-    public void delete(String filename) {
+    public boolean deleteById(int id) {
+        String filename = id + ".json";
+
         File file = new File(basePath + filename);
-        if (!file.exists()) return;
-        file.delete();
+        if (!file.exists()) return false;
+        return file.delete();
     }
 
     public void update(int id, WiseSaying newForm) throws IOException {
@@ -179,7 +181,7 @@ public class WiseSayingRepository {
     public void build(Map<Integer, WiseSaying> map) throws IOException {
         File file = new File(basePath + "data.json");
         if (!file.exists()) {
-            file.createNewFile();
+            boolean _ = file.createNewFile();
         }
 
         WiseSaying[] formArr = map.values().toArray(new WiseSaying[0]);
