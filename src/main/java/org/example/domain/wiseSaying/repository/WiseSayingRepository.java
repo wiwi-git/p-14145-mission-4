@@ -9,6 +9,15 @@ import java.util.*;
 
 public class WiseSayingRepository {
     public final String basePath = System.getProperty("user.dir") + "/db/wiseSaying/";
+    public int lastId = -1;
+
+    public WiseSayingRepository() {
+        try {
+            lastId = readLastIdFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void writeFileForm(String filename, WiseSaying form) throws IOException {
         File folder = new File(basePath);
@@ -60,7 +69,15 @@ public class WiseSayingRepository {
         writeFileForm(id + ".json", newForm);
     }
 
-    public int getLastId() throws IOException{
+    public int getLastId() {
+        return lastId;
+    }
+
+    public void setLastId(int lastId) {
+        this.lastId = lastId;
+    }
+
+    private int readLastIdFile() throws IOException{
         File file = new File(basePath + "lastId.txt");
         if (!file.exists()) {
             return 0;

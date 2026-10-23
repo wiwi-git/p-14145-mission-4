@@ -11,30 +11,21 @@ import java.util.Map;
 public class WiseSayingService {
     WiseSayingRepository wsRepository = new WiseSayingRepository();
     public Map<Integer, WiseSaying> savedForms = getSavedForms();
-    public int lastId = getLastId();
 
     public int register(String text, String auth) {
-        int id = lastId + 1;
+        int id = wsRepository.getLastId() + 1;
 
         WiseSaying newForm = new WiseSaying(id, text, auth);
         savedForms.put(id, newForm);
         try {
             wsRepository.write(id, newForm);
             int result = wsRepository.writeLastId(id);
-            if (result >= 0) lastId = result;
+            if (result >= 0) wsRepository.setLastId(result);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         return id;
-    }
-
-    private int getLastId() {
-        try {
-            return wsRepository.getLastId();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private Map<Integer, WiseSaying> getSavedForms() {
