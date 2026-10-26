@@ -97,11 +97,20 @@ public class WiseSayingDbRepository {
         int chunkSize = 1000;
         int offset = 0;
 
+        Path baseDir = Path.of(basePath);
+        try {
+            Files.createDirectories(baseDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Path filePath = baseDir.resolve("data.json");
+
         while(true) {
             Sql sql = dbManager.genSql()
                     .append("SELECT * FROM wisesaying ORDER BY id LIMIT ? OFFSET ?", chunkSize, offset);
              List<WiseSaying> result = sql.selectRows(WiseSaying.class);
-             try(BufferedWriter writer = Files.newBufferedWriter(Path.of(basePath + "data.json"))) {
+             try(BufferedWriter writer = Files.newBufferedWriter(filePath)) {
                  for (WiseSaying w: result) {
                      writer.write(w.toJson());
                  }
@@ -118,8 +127,17 @@ public class WiseSayingDbRepository {
         dbManager.run("TRUNCATE wisesaying");
     }
 
+    /**
+     * select like~ 절에 count over 까지 넣은 쿼리라 offset으로 아무값도 안나오는 경우 문제가 발생할수있음
+     * @param {KeywordType} type
+     * @param {String} keyword
+     * @param {int} limit
+     * @param {int} offset
+     * @return {ExecuteResult}
+     * @throws IOException
+     */
     public ExecuteResult search(KeywordType type, String keyword, int limit, int offset) throws IOException{
-        Sql sql = dbManager.genSql().append("SELECT * FROM wisesaying");
+        Sql sql = dbManager.genSql().append("SELECT *, COUNT(*) OVER() as total_count FROM wisesaying");
         switch (type) {
             // SELECT * FROM wisesaying WHERE content LIKE CONCAT('%', '', '%') LIMIT 5 OFFSET 0;
             case CONTENT -> sql.append("WHERE content LIKE CONCAT('%', ?, '%')", keyword);
@@ -140,8 +158,8 @@ public class WiseSayingDbRepository {
     }
 
     public int getTotalCount() {
-        Map<String, Object> result = dbManager.genSql().append("SELECT COUNT(*) FROM wisesaying").selectRow();
-        Number count = (Number) result.getOrDefault("COUNT(*)", 0);
+        Map<String, Object> result = dbManager.genSql().append("SELECT COUNT(*) as total_count FROM wisesaying").selectRow();
+        Number count = (Number) result.getOrDefault("total_count", 0);
         return count.intValue();
     }
 

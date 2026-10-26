@@ -184,7 +184,7 @@ public class WiseSayingRepository {
     public void build(Map<Integer, WiseSaying> map) throws IOException {
         File file = new File(basePath + "data.json");
         if (!file.exists()) {
-            boolean _ = file.createNewFile();
+            file.createNewFile();
         }
 
         WiseSaying[] formArr = map.values().toArray(new WiseSaying[0]);

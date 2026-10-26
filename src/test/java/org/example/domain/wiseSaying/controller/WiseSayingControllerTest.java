@@ -1,17 +1,20 @@
 package org.example.domain.wiseSaying.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.App;
 import org.example.AppTestRunner;
 
 import org.example.EnvLoader;
 import org.example.TestUtil;
 
+import org.example.domain.wiseSaying.entity.WiseSaying;
 import org.example.domain.wiseSaying.repository.WiseSayingDbRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -182,10 +185,16 @@ class WiseSayingControllerTest {
             while ((line = br.readLine()) != null) {
                 lines.append(line);
             }
-            assertThat(lines.toString())
-                    .contains("\"id\": 1")
-                    .contains("\"content\": \"현재를 사랑하라.\",")
-                    .contains("\"author\": \"작자미상\"");
+            ObjectMapper mapper = new ObjectMapper();
+            WiseSaying readValue =  mapper.readValue(file, WiseSaying.class);
+
+            assertThat(readValue)
+                    .isNotNull()
+                    .extracting(
+                            WiseSaying::getId,
+                            WiseSaying::getAuth,
+                            WiseSaying::getContent)
+                    .containsExactly(1L, "작자미상", "현재를 사랑하라.");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
