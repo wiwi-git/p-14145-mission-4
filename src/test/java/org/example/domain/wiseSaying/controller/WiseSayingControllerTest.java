@@ -1,9 +1,12 @@
 package org.example.domain.wiseSaying.controller;
 
+import org.example.App;
 import org.example.AppTestRunner;
 
+import org.example.EnvLoader;
 import org.example.TestUtil;
-import org.example.domain.wiseSaying.repository.WiseSayingRepository;
+
+import org.example.domain.wiseSaying.repository.WiseSayingDbRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class WiseSayingControllerTest {
     @BeforeEach
     void beforeEach() {
+        EnvLoader.load();
         new WiseSayingController(TestUtil.genScanner("")).allClear();
     }
 
@@ -164,7 +168,7 @@ class WiseSayingControllerTest {
         assertThat(out)
                 .contains("data.json 파일의 내용이 갱신되었습니다.");
 
-        WiseSayingRepository wsRepo = new WiseSayingRepository();
+        WiseSayingDbRepository wsRepo = new WiseSayingDbRepository();
         File file = new File(wsRepo.basePath + "data.json");
         assertTrue(file.exists());
 

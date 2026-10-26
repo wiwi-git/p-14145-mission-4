@@ -7,6 +7,9 @@ import org.example.domain.wiseSaying.entity.WiseSaying;
 import java.io.*;
 import java.util.*;
 
+/**
+ * 레거시 - 사용안하는중 WiseSayingDbRepository 로 변경
+ */
 public class WiseSayingRepository {
     public final String basePath = System.getProperty("user.dir") + "/db/wiseSaying/";
     public int lastId = -1;
@@ -96,10 +99,10 @@ public class WiseSayingRepository {
         }
     }
 
-    public Map<Integer, WiseSaying> getSavedForms() throws IOException{
+    public Map<Long, WiseSaying> getSavedForms() throws IOException{
         File folder = new File(basePath);
         File[] files = folder.listFiles();
-        Map<Integer, WiseSaying> map = new HashMap<>();
+        Map<Long, WiseSaying> map = new HashMap<>();
 
         if (files != null) {
             for (File file : files) {
@@ -151,7 +154,7 @@ public class WiseSayingRepository {
                             form.setId(id);
                             break;
                         case "content":
-                            form.setText(value);
+                            form.setContent(value);
                             break;
                         case "author":
                             form.setAuth(value);
@@ -188,7 +191,7 @@ public class WiseSayingRepository {
         Arrays.sort(formArr, new Comparator<WiseSaying>() {
             @Override
             public int compare(WiseSaying o1, WiseSaying o2) {
-                return Integer.compare(o1.getId(), o2.getId());
+                return Long.compare(o1.getId(), o2.getId());
             }
         });
 
@@ -205,7 +208,7 @@ public class WiseSayingRepository {
 
                 pw.println("\t{");
                 pw.println("\t\t\"id\": " + form.getId() + ",");
-                pw.println("\t\t\"content\": \"" + form.getText() + "\",");
+                pw.println("\t\t\"content\": \"" + form.getContent() + "\",");
                 pw.println("\t\t\"author\": \"" + form.getAuth() + "\"");
 
                 if (index < formArr.length) {
@@ -255,7 +258,7 @@ public class WiseSayingRepository {
 
                     break;
                 case KeywordType.CONTENT:
-                    if (form.getText().contains(keyword)) {
+                    if (form.getContent().contains(keyword)) {
                         result.add(form);
                     }
             }

@@ -5,6 +5,7 @@ import org.example.domain.system.KeywordType;
 import org.example.domain.system.ParseCmd;
 import org.example.domain.wiseSaying.entity.WiseSaying;
 import org.example.domain.wiseSaying.service.WiseSayingService;
+import org.example.domain.wiseSaying.simpledb.ExecuteResult;
 
 import java.util.List;
 import java.util.Scanner;
@@ -18,16 +19,16 @@ public class WiseSayingController {
     }
 
     public void register() {
-        String text = "";
+        String content = "";
         String auth = "";
 
         System.out.print("명언 : ");
-        text = sc.nextLine();
+        content = sc.nextLine();
 
         System.out.print("작가 : ");
         auth = sc.nextLine();
 
-        int id = wsService.register(text, auth);
+        long id = wsService.register(content, auth);
 
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
@@ -66,30 +67,19 @@ public class WiseSayingController {
                         """, type.toString().toLowerCase(), keyword);
         }
 
-        int count = 0;
-        int passCount = offset;
+        ExecuteResult result = wsService.search(type, keyword, MAX_PRINT_LIMIT, offset);
 
-        List<WiseSaying> result = wsService.search(type, keyword);
-
-        for (WiseSaying w : result) {
-            if (passCount >= 0) {
-                passCount--;
-                if (passCount >= 0) continue;
-            }
-            if (count >= MAX_PRINT_LIMIT) break;
-
+        for (WiseSaying w : result.listToGeneral(WiseSaying.class)) {
             String printLine = w.toString();
             System.out.println(printLine);
-            count++;
         }
-
         int currentPage = offset / MAX_PRINT_LIMIT + 1;
 
         StringBuilder pageLine = new StringBuilder("페이지 : ");
-        int total = result.size();
+
+        int total = result.getTotalCount();
         int maxPage = total / MAX_PRINT_LIMIT;
         if (total % MAX_PRINT_LIMIT > 0) maxPage ++;
-
 
         for (int i = 1; i < maxPage; i++) {
             String pageNumber = "";
@@ -106,13 +96,12 @@ public class WiseSayingController {
 
         System.out.println("----------------------");
         System.out.println(pageLine);
-
     }
 
     public void delete(ParseCmd cmd) {
         int id = Util.safeParseInt(cmd.getParam("id").trim());
 
-        if (!wsService.containsKey(id)) {
+        if (!wsService.containsId(id)) {
             System.out.println(id + "번 명언은 존재하지 않습니다.");
             return;
         }
@@ -122,22 +111,22 @@ public class WiseSayingController {
 
     public void update(ParseCmd cmd) {
         int id = Util.safeParseInt(cmd.getParam("id").trim());
-        if (!wsService.containsKey(id)) {
+        if (!wsService.containsId(id)) {
             System.out.println(id + "번 명언은 존재하지 않습니다.");
             return;
         }
 
-        WiseSaying form = wsService.getForm(id);
+        WiseSaying form = wsService.getById(id);
 
-        System.out.println("명언(기존) : " + form.getText());
+        System.out.println("명언(기존) : " + form.getContent());
         System.out.print("명언 : ");
-        form.setText(sc.nextLine());
+        form.setContent(sc.nextLine());
 
         System.out.println("작가(기존) : " + form.getAuth());
         System.out.print("작가 : ");
         form.setAuth(sc.nextLine());
 
-        wsService.update(id, form);
+        wsService.update(form);
     }
 
     public void build() {

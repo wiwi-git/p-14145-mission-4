@@ -14,6 +14,10 @@ public class App {
         this.sc = sc;
     }
 
+    public String getCurrentAppEnv() {
+        return System.getProperty("app_env");
+    }
+
     public void run(boolean addSample) {
 
         SystemController sysController = new SystemController();

@@ -1,21 +1,27 @@
 package org.example.domain.wiseSaying.entity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Map;
+
 public class WiseSaying {
-    private int id;
-    private String text = "";
+    private long id;
+    private String content = "";
     private String auth = "";
 
-    public WiseSaying(int id) {
+    public WiseSaying(){}
+    public WiseSaying(long id) {
         this.id = id;
     }
 
-    public WiseSaying(int id, String text, String auth) {
+    public WiseSaying(long id, String content, String auth) {
         this.id = id;
-        this.text = text;
+        this.content = content;
         this.auth = auth;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -23,16 +29,16 @@ public class WiseSaying {
         return auth;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public void setAuth(String auth) {
@@ -40,16 +46,28 @@ public class WiseSaying {
     }
 
     public String toString() {
-        return  id + " / " + auth + " / " + text;
+        return  id + " / " + auth + " / " + content;
     }
 
     public String toJson() {
-        return """
-            {
-                "id": %d,
-                "content": "%s",
-                "author": "%s"
-            }
-            """.formatted(id, text, auth);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+//        return """
+//            {
+//                "id": %d,
+//                "content": "%s",
+//                "author": "%s"
+//            }
+//            """.formatted(id, content, auth);
+    }
+
+    public void setData(Map<String, Object> rowMap) {
+        setAuth((String) rowMap.get("author"));
+        setContent((String) rowMap.get("content"));
+        setId((Long) rowMap.get("id"));
     }
 }
